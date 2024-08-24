@@ -7,12 +7,18 @@ import { PasswordInput } from '@/components/ui/password-input';
 
 import FooterForm from './FooterForm';
 import { FormValues, schema } from '../schema';
+import { useSignUp } from '@/hooks/signUp';
+import { useToast } from '@/components/ui/use-toast';
+import { Loader2 } from 'lucide-react';
 
 
 
 
 
 const Formulario = () => {
+    const { signUp, error, isLoading } = useSignUp()
+    const { toast } = useToast()
+
     const form = useForm<FormValues>({
         resolver: zodResolver(schema),
         defaultValues: {
@@ -22,7 +28,23 @@ const Formulario = () => {
     });
 
     const onSubmit = async (data: FormValues) => {
-        console.log("SUCCESS", data);
+        if (data) {
+            const { email, password, nome, Imagem } = data
+            try {
+                await signUp({ email, password, username: nome, photo: Imagem })
+                toast({
+                    title: "Tudo ocorreu perfeitamente",
+                    description: `Bem vindo, ${nome}!`,
+                })
+            }
+            catch {
+                toast({
+                    variant: "destructive",
+                    title: "Alguma coisa deu errado!",
+                    description: `${error ? error : "Erro desconhecido"}`,
+                })
+            }
+        }
     }
 
     return (
@@ -38,7 +60,13 @@ const Formulario = () => {
                                 <FormItem>
                                     <FormLabel>Foto de perfil</FormLabel>
                                     <FormControl>
-                                        <Input className='border-[#64748B]' placeholder="Ficheiro..." type='file' {...field} />
+                                        <Input className='border-[#64748B]' accept='image/jpeg, image/png' placeholder="Ficheiro..." type='file'
+                                            onChange={(e) => {
+                                                const file = e.target.files?.[0];
+                                                if (file) {
+                                                    field.onChange(file); // Atualiza o valor do campo com o arquivo selecionado
+                                                }
+                                            }} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -92,7 +120,16 @@ const Formulario = () => {
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit" className='mt-[8px] h-[56px] text-xl font-semibold tracking-tight bg-slate-900'>Continue</Button>
+                        {isLoading ? (
+                            <Button disabled className='mt-[8px] h-[56px] text-xl font-semibold tracking-tight bg-slate-900'>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                                Aguarde
+                            </Button>
+                        ) : (
+                            <Button type="submit" className='mt-[8px] h-[56px] text-xl font-semibold tracking-tight bg-slate-900'>
+                                Continue
+                            </Button>
+                        )}
                     </form>
                     <FooterForm />
                 </main>

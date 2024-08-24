@@ -1,8 +1,12 @@
 import { Button } from '@/components/ui/button'
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import { useSignUp } from '@/hooks/signUp';
+import { typesOfSignUp } from '@/utils/typesOfSignUp';
 
 const FooterForm = () => {
+    const { isLoading } = useSignUp()
+    const { signUpGoogle, signUpGithub } = typesOfSignUp()
     return (
         <div className='mt-[35px]'>
             <p className='leading-7 [&:not(:first-child)]:mt-6 text-slate-500 flex gap-1 mb-[28px]'>Esqueceu sua senha?
@@ -13,11 +17,36 @@ const FooterForm = () => {
                 <span className="mx-4 text-gray-400">Outros meios</span>
                 <div className="flex-grow border-t border-gray-300"></div>
             </div>
-            <div className='flex flex-col justify-center items-center'>
-                <Button className='flex gap-[13px] items-center justify-center h-[56px] max-w-[384px] w-[100%] text-xl font-semibold tracking-tight bg-transparent border-slate-600 border text-slate-600'><FcGoogle />Google</Button>
-                <Button className='flex gap-[13px] items-center justify-center mt-[12px] max-w-[384px] w-[100%] h-[56px] text-xl font-semibold tracking-tight bg-transparent border-slate-600 border text-slate-600'><FaGithub />Github</Button>
-                <p className='mt-[73px] medium-h:mt-[30px] text-slate-300'>@2024 Produzido por Davi Garutti Diniz</p>
-            </div>
+            {isLoading ? (
+                <div className='flex flex-col justify-center items-center'>
+                    <Button
+                        disabled
+                        className='flex gap-[13px] items-center justify-center h-[56px] max-w-[384px] w-[100%] text-xl font-semibold tracking-tight bg-transparent border-slate-600 border text-slate-600'>
+                        <FcGoogle />Google
+                    </Button>
+                    <Button
+                        disabled
+                        className='flex gap-[13px] items-center justify-center mt-[12px] max-w-[384px] w-[100%] h-[56px] text-xl font-semibold tracking-tight bg-transparent border-slate-600 border text-slate-600'>
+                        <FaGithub />Github
+                    </Button>
+                    <p className='mt-[73px] medium-h:mt-[30px] text-slate-300'>@2024 Produzido por Davi Garutti Diniz</p>
+                </div>
+            ) : (
+
+                <div className='flex flex-col justify-center items-center'>
+                    <Button
+                        onClick={signUpGoogle}
+                        className='flex gap-[13px] items-center justify-center h-[56px] max-w-[384px] w-[100%] text-xl font-semibold tracking-tight bg-transparent border-slate-600 border text-slate-600'>
+                        <FcGoogle />Google
+                    </Button>
+                    <Button
+                        onClick={signUpGithub}
+                        className='flex gap-[13px] items-center justify-center mt-[12px] max-w-[384px] w-[100%] h-[56px] text-xl font-semibold tracking-tight bg-transparent border-slate-600 border text-slate-600'>
+                        <FaGithub />Github
+                    </Button>
+                    <p className='mt-[73px] medium-h:mt-[30px] text-slate-300'>@2024 Produzido por Davi Garutti Diniz</p>
+                </div>
+            )}
         </div>
     )
 }
